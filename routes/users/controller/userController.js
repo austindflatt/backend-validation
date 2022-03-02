@@ -37,6 +37,19 @@ const { errorHandler } = require('../utils/errorHandler');
 //     if(str.length === 0 || str === null) return true;
 // };
 
+const getCurrentUser = async (req, res) => {
+    try {
+        const { decodedToken } = res.locals;
+        const foundUser = await User.findOne({
+            email: decodedToken.email,
+        }).populate("orderHistory", "-orderOwner -__v");
+        console.log(foundUser)
+        res.status(200).json({ message: 'Hello' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error', error: error.message });
+    }
+}
+
 const createUser = async (req, res) => {
     try {
         // let errObj = {};
@@ -132,5 +145,6 @@ const updateProfile = async (req, res) => {
 module.exports = {
     createUser,
     userLogin,
-    updateProfile
+    updateProfile,
+    getCurrentUser
 }
